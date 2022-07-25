@@ -19,7 +19,7 @@ const Home: NextPage = () => {
       <div className="text-2xl text-center">Which Pokemon is softer</div>
       <div className="p-2" />
       <div className="border rounded p-8 flex justify-between items-center max-w-2xl">
-        <div className="w-64 h-64 flex flex-col items-center justify-center">
+        <div className="w-64 h-64 flex flex-col ">
           <img
             style={{ imageRendering: "pixelated" }}
             src={
@@ -28,12 +28,14 @@ const Home: NextPage = () => {
                 : ""
             }
             alt=""
-            className="w-full render"
+            className="w-full "
           />
-          <div>{firstPokemon.data?.name}</div>
+          <div className="text-xl capitalize text-center mt-[-2rem]">
+            {firstPokemon.data?.name}
+          </div>
         </div>
         <div className="p-8">vs</div>
-        <div className="w-64 h-64 flex flex-col items-center justify-center">
+        <div className="w-64 h-64 flex flex-col ">
           <img
             style={{ imageRendering: "pixelated" }}
             src={
@@ -44,7 +46,9 @@ const Home: NextPage = () => {
             alt=""
             className="w-full"
           />
-          <div>{secondPokemon.data?.name}</div>
+          <div className="text-xl capitalize text-center mt-[-2rem]">
+            {secondPokemon.data?.name}
+          </div>
         </div>
       </div>
     </div>
