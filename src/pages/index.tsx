@@ -2,6 +2,7 @@ import { getOptionsForVote } from "@/utils/getRandomPokemon";
 import { trpc } from "@/utils/trpc";
 import type { NextPage } from "next";
 import { useEffect, useMemo, useState } from "react";
+import { inferQueryResponse } from "./api/trpc/[trpc]";
 
 const buttonClasses =
   "inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500";
@@ -21,60 +22,64 @@ const Home: NextPage = () => {
     updateIds(getOptionsForVote());
   };
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center text-white">
+    <div className="h-screen w-screen flex flex-col justify-center items-center text-white">
       <div className="text-2xl text-center">Which Pokemon is softer</div>
       <div className="p-2" />
       <div className="border rounded p-8 flex justify-between items-center max-w-2xl">
-        <div className="w-64 h-64 flex flex-col items-center justify-center ">
-          <img
-            style={{ imageRendering: "pixelated" }}
-            src={
-              firstPokemon.data?.sprites.front_default
-                ? firstPokemon.data?.sprites.front_default
-                : ""
-            }
-            alt=""
-            className="w-full "
-          />
-          <div className="text-xl capitalize text-center mt-[-2rem]">
-            {firstPokemon.data?.name}
-          </div>
-          <button
-            onClick={() => {
-              voteForRoundest(first);
-            }}
-            className={buttonClasses}
-          >
-            Rounder
-          </button>
-        </div>
-        <div className="p-8">vs</div>
-        <div className="w-64 h-64 flex flex-col items-center justify-center ">
-          <img
-            style={{ imageRendering: "pixelated" }}
-            src={
-              secondPokemon.data?.sprites.front_default
-                ? secondPokemon.data?.sprites.front_default
-                : ""
-            }
-            alt=""
-            className="w-full"
-          />
-          <div className="text-xl capitalize text-center mt-[-2rem]">
-            {secondPokemon.data?.name}
-          </div>
-          <button
-            onClick={() => {
-              voteForRoundest(second);
-            }}
-            className={buttonClasses}
-          >
-            Rounder
-          </button>
-        </div>
+        {!firstPokemon.isLoading &&
+          firstPokemon.data &&
+          !secondPokemon.isLoading &&
+          secondPokemon.data && (
+            <>
+              <PokemonListing
+                pokemon={firstPokemon.data}
+                vote={() => voteForRoundest(first)}
+              />
+              <div className="p-8">vs</div>
+              <PokemonListing
+                pokemon={secondPokemon.data}
+                vote={() => voteForRoundest(second)}
+              />
+            </>
+          )}
+        <div className="p-2" />
       </div>
     </div>
   );
 };
 
 export default Home;
+
+type PokemonFromServer = inferQueryResponse<"get-pokemon-by-id">;
+// react.fc is a way to declare the type for a functional component that comes
+// with expectation of: 1.it having children, 2.returning valid jsx
+const PokemonListing: React.FC<{
+  pokemon: PokemonFromServer;
+  vote: () => void;
+}> = (props) => {
+  return (
+    <div className=" flex flex-col items-center  ">
+      <img
+        style={{ imageRendering: "pixelated" }}
+        src={
+          props.pokemon.sprites.front_default
+            ? props.pokemon.sprites.front_default
+            : ""
+        }
+        alt=""
+        className="w-64 h-64"
+      />
+      <div className="text-xl capitalize text-center mt-[-2rem]">
+        {props.pokemon.name}
+      </div>
+      <button
+        onClick={() => {
+          props.vote();
+        }}
+        className={buttonClasses}
+      >
+        Rounder
+      </button>
+    </div>
+  );
+};
