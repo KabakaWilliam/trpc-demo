@@ -69,7 +69,7 @@ const PokemonListing: React.FC<{
         alt=""
         className="w-64 h-64"
       />
-      <div className="text-xl capitalize text-center mt-[-2rem]">
+      <div className="text-xl capitalize text-center mt-[-0.5rem]">
         {props.pokemon.name}
       </div>
       <button
@@ -78,7 +78,7 @@ const PokemonListing: React.FC<{
         }}
         className={buttonClasses}
       >
-        Rounder
+        Softer
       </button>
     </div>
   );
